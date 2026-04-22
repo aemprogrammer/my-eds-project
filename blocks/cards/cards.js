@@ -1,58 +1,53 @@
 // blocks/cards/cards.js
-// EDS automatically calls this function when it finds a .cards div on the page
-
 export default function decorate(block) {
-
-  // Each row in the Word/Docs table becomes one card
+  // Get all rows
   const rows = [...block.children];
-
-  // Clear the block — we will rebuild it properly
+  
+  // Clear the block
   block.innerHTML = '';
-
-  // Create a cards container div
+  
+  // Create cards container
   const cardsContainer = document.createElement('div');
   cardsContainer.classList.add('cards-container');
-
+  
   rows.forEach((row) => {
-    // Each row has columns (cells)
     const cells = [...row.children];
-
-    // Create a card div
+    
+    // Skip if less than 2 cells
+    if (cells.length < 2) return;
+    
+    // Create card
     const card = document.createElement('div');
     card.classList.add('card');
-
-    // Column 0: Image (if exists)
-    const imgCell = cells[0];
-    if (imgCell) {
+    
+    // Cell 0: Image or empty
+    const firstCell = cells[0];
+    const hasImage = firstCell?.querySelector('img');
+    if (hasImage) {
       const imgWrapper = document.createElement('div');
       imgWrapper.classList.add('card-image');
-      if (imgCell.querySelector('img')) {
-        imgWrapper.innerHTML = imgCell.innerHTML;
-      } else {
-        // No image — skip image wrapper
-        imgWrapper.innerHTML = imgCell.innerHTML;
-      }
+      imgWrapper.innerHTML = firstCell.innerHTML;
       card.append(imgWrapper);
     }
-
-    // Column 1: Heading
+    
+    // Cell 1: Heading
     const headingText = cells[1]?.textContent.trim() || '';
     if (headingText) {
       const h3 = document.createElement('h3');
       h3.textContent = headingText;
       card.append(h3);
     }
-
-    // Column 2: Description
+    
+    // Cell 2: Description
     const descText = cells[2]?.textContent.trim() || '';
     if (descText) {
       const p = document.createElement('p');
       p.textContent = descText;
       card.append(p);
     }
-
+    
     cardsContainer.append(card);
   });
-
+  
   block.append(cardsContainer);
 }
